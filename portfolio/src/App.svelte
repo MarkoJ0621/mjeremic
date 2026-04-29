@@ -74,11 +74,13 @@
   const videos = {
     video1: {
       url: "https://youtube.com/embed/kVsvYNYZnN0",
-      description: "short film......",
+      description:
+        "This installation was an exploration of my relationship with language and expression of thought. Growing up in a multilingual environment forced people to find different ways to express their thoughts when words weren’t an option. I wanted to explore this through the lens of graffiti, a form of expression that is taboo yet so visible. The video features a variety of media covering the topic of graffiti and its censorship, and various mouths saying sentences in various languages transliterated to english.",
     },
     video2: {
       url: "https://youtube.com/embed/8ijJ3A1Hv_4",
-      description: "another video...",
+      description:
+        "I've worked with various artists in the area, using touchdesigner for their live shows, below is a reel of various concerts settings and visuals that I've designed.",
     },
   };
 
@@ -530,9 +532,14 @@
       </button>
     </div>
   </div>
-  <h1>Video Content 1!</h1>
   <div id="videoDescription">
-    Talk about the short film blah blah blah!!!!!!!
+    This installation was an exploration of my relationship with language and
+    expression of thought. Growing up in a multilingual environment forced
+    people to find different ways to express their thoughts when words weren’t
+    an option. I wanted to explore this through the lens of graffiti, a form of
+    expression that is taboo yet so visible. The video features a variety of
+    media covering the topic of graffiti and its censorship, and various mouths
+    saying sentences in various languages transliterated to english.
   </div>
   <div class="resize-handle"></div>
   <button class="videoNav" id="backward" on:click={() => changeVideo(-1)}>
@@ -624,8 +631,9 @@
           Bachelor of Music, Electronic Production and Design, Creative Coding
           2023-2026
         </li>
-        <li>3.99 GPA, 5x Dean's List</li>
+        <li>3.99 GPA, 6x Dean's List</li>
         <li>World Tour Scholarship</li>
+        <li>Max Matthews award recepient</li>
       </ul>
     </div>
     <div class="workExperience cvTitle">Work Experience</div>
@@ -636,6 +644,7 @@
       <ul class="cvMiniDesc">
         <li>Resident Assistant for over 30 residents</li>
         <li>Ran the first year abroad living learning community</li>
+        <li>Co-program of the year award recipient</li>
       </ul>
       <div class="cvMiniTitle">
         Media Team - AIDA Freediving World Championship 2025
@@ -673,12 +682,19 @@
     <div class="cvMiniTitle">
       2025, fusionem artis - Synthember 2025, installed at New Alliance Gallery
     </div>
-    <div class="cvMiniTitle">2025, Graffiti project lol</div>
     <div class="cvMiniTitle">
       2024, Facing West Shadows - Lysistrata, audio production,mixing and
       recording
     </div>
     <br />
+    <div class="cvTitle">Visual Design</div>
+    <br />
+    <div class="cvMiniTitle">
+      My words don't define me, my actions do - 2025
+    </div>
+    <div class="cvMiniTitle">
+      Live visual design - .ivy, T-rey Spitz, and others
+    </div>
     <div class="cvTitle">Software</div>
     <br />
     <div class="cvMiniTitle">
