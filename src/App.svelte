@@ -1,8 +1,9 @@
 <script>
   import backgroundVideo from "./assets/video.mp4";
   import resume from "./assets/resume_jeremic.pdf";
-  import testSong from "./assets/test.wav";
-  import testSong2 from "./assets/touchdesigning.mp3";
+  import doink from "./assets/doink.mp3";
+  import buchlaEtude from "./assets/BuchlaEtude.mp3";
+  import liveHardware from "./assets/liveHardware.mp3";
   import { onMount } from "svelte";
 
   onMount(() => {
@@ -60,8 +61,21 @@
   }
 
   function initAudioPlayer() {
-    const audioElement = document.getElementById("audioPlayer");
+    const audioElement = /** @type {HTMLAudioElement | null} */ (
+      document.querySelector("#audioPlayer")
+    );
     if (!audioElement) return;
+
+    // initialize description and ensure player src matches the current audio
+    const audioDesc = /** @type {HTMLParagraphElement | null} */ (
+      document.getElementById("audioDescription")
+    );
+    if (audioDesc) {
+      audioDesc.textContent = audio.audio1.description;
+    }
+    if (!audioElement.src) {
+      audioElement.src = audio.audio1.url;
+    }
 
     audioElement.addEventListener("timeupdate", updateSlider);
     audioElement.addEventListener("ended", () => {
@@ -78,7 +92,7 @@
         "This installation was an exploration of my relationship with language and expression of thought. Growing up in a multilingual environment forced people to find different ways to express their thoughts when words weren’t an option. I wanted to explore this through the lens of graffiti, a form of expression that is taboo yet so visible. The video features a variety of media covering the topic of graffiti and its censorship, and various mouths saying sentences in various languages transliterated to english.",
     },
     video2: {
-      url: "https://youtube.com/embed/8ijJ3A1Hv_4",
+      url: "https://youtube.com/embed/-H0bv6bS_Ag",
       description:
         "I've worked with various artists in the area, using touchdesigner for their live shows, below is a reel of various concerts settings and visuals that I've designed.",
     },
@@ -86,21 +100,29 @@
 
   const audio = {
     audio1: {
-      url: testSong,
-      description: "Audio....1.....",
+      url: buchlaEtude,
+      description:
+        "This etude was an exercise of working on modular sound design, and experimenting with what is possible on the Buchla 200e system. The composition mostly features processed recordings from the Buchla, with the addition of one vocal and drum sample process through the composer's desktop project. Sudden alarms and loud glitches paint a desolate world, building rising tension as the piece unfolds.",
     },
     audio2: {
-      url: testSong2,
-      description: "Audio....2.....",
+      url: liveHardware,
+      description:
+        "This is a live hardware set feature the elektron rytm II and the lyra 8 being used together.",
+    },
+    audio3: {
+      url: doink,
+      description:
+        "This is a short piece i wrote for piano and various electronic sounds, ",
     },
   };
   let activeVideo = "video1";
-  let activeIndex = 1;
+  let activeVideoIndex = 1;
+  let activeAudioIndex = 1;
 
   function changeVideo(direction) {
     const videoHolder = document.getElementById("video2");
-    activeIndex = ((activeIndex - 1 + direction) % 2) + 1;
-    activeVideo = `video${activeIndex}`;
+    activeVideoIndex = ((activeVideoIndex - 1 + direction) % 2) + 1;
+    activeVideo = `video${activeVideoIndex}`;
     const videoDisplay = /** @type {HTMLIFrameElement | null} */ (
       document.querySelector("#videoPlayer")
     );
@@ -111,8 +133,10 @@
   }
 
   function changeAudio(direction) {
-    activeIndex = ((activeIndex - 1 + direction) % 2) + 1;
-    const activeAudio = `audio${activeIndex}`;
+    const audioCount = Object.keys(audio).length;
+    activeAudioIndex =
+      ((activeAudioIndex - 1 + direction + audioCount) % audioCount) + 1;
+    const activeAudio = `audio${activeAudioIndex}`;
     const audioPlayer = /** @type {HTMLAudioElement | null} */ (
       document.querySelector("#audioPlayer")
     );
@@ -271,7 +295,7 @@
         overflow: "hidden",
       },
     },
-    software: {
+    software2: {
       fullscreen: {
         top: "0",
         left: "0",
@@ -280,10 +304,33 @@
         overflow: "auto",
       },
       open: {
-        top: "5vh",
-        left: "44vw",
-        width: "26vw",
-        height: "60vh",
+        top: "0vh",
+        left: "25vw",
+        width: "25vw",
+        height: "100vh",
+        overflow: "auto",
+      },
+      closed: {
+        top: "0",
+        left: "0",
+        width: "0",
+        height: "0",
+        overflow: "hidden",
+      },
+    },
+    software1: {
+      fullscreen: {
+        top: "0",
+        left: "0",
+        width: "100vw",
+        height: "100vh",
+        overflow: "auto",
+      },
+      open: {
+        top: "0vh",
+        left: "50vw",
+        width: "50vw",
+        height: "100vh",
         overflow: "auto",
       },
       closed: {
@@ -392,6 +439,11 @@
     if (sectionId === "audio") {
       loadSection("audio1");
       loadSection("audio2");
+      return;
+    }
+    if (sectionId === "software") {
+      loadSection("software1");
+      loadSection("software2");
       return;
     }
     const targetSection = /** @type {HTMLElement | null} */ (
@@ -578,18 +630,24 @@
       <button
         class="close-button"
         type="button"
-        on:click={() => loadMenu("audio")}
+        on:click={() => loadMenu("audio1")}
       >
         <h3>X</h3>
       </button>
     </div>
-    <div id="audioDescription">Audio....1....</div>
+  </div>
+  <div class="sectionText" id="audioDescription">
+    {audio[`audio${activeAudioIndex}`].description}
   </div>
   <div class="resize-handle"></div>
 </div>
 <div id="audio2" class="details">
   <div>
-    <audio src={testSong} preload="metadata" id="audioPlayer"></audio>
+    <audio
+      src={audio[`audio${activeAudioIndex}`].url}
+      preload="metadata"
+      id="audioPlayer"
+    ></audio>
     <button id="playButton" on:click={playAudio}>Play</button>
     <div id="transportControls">
       <button class="audioTransport" on:click={() => changeAudio(-1)}>
@@ -764,6 +822,98 @@
     is inspired by someone’s need to express their idea. With this mindset I hope
     to not lose sight of the creative vision through the technological processes
     required to each and express it.
+  </div>
+  <div class="resize-handle"></div>
+</div>
+<div id="software2" class="details">
+  <div class="sectionHeader" use:draggable>
+    <div class="sectionHeaderControls">
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("software2")}
+        ><h3>□</h3>
+      </button>
+      <button
+        class="close-button"
+        type="button"
+        on:click={() => loadMenu("software2")}
+        ><h3>X</h3>
+      </button>
+    </div>
+  </div>
+  <ul>
+    <li><a href="#ebaton">e-baton</a></li>
+    <li><a href="#hydraRenderer">Hydra Renderer</a></li>
+    <li>
+      <a href="#earthMissionControl">Earth Mission Control - Coral Quest</a>
+    </li>
+    <li>
+      <a href="#audiotoMIDI">Audio to MIDI Converter</a>
+    </li>
+  </ul>
+  <div class="resize-handle"></div>
+</div>
+<div id="software1" class="details">
+  <div class="sectionHeader" use:draggable>
+    <div class="sectionHeaderControls">
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("software1")}
+        ><h3>□</h3>
+      </button>
+      <button
+        class="close-button"
+        type="button"
+        on:click={() => loadMenu("software1")}
+        ><h3>X</h3>
+      </button>
+    </div>
+  </div>
+  <h1>software//hardware</h1>
+  <div id="ebaton">
+    the e-baton is a NIME (New Instrument for Music Expression) that I built in
+    late 2025 in an attempt to bridge the gap between the gestural communication
+    of conductors and electronic music. Using an accelerometer was expansive
+    feature expression, I was able to create a conducting-like interaface taht
+    could be use to communicate with Max. <br /> This project was accepted into the
+    NIME 2026 conference, and I will be attending to present my research.
+  </div>
+  <iframe
+    title="batonShowcase"
+    src="https://youtube.com/embed/gltICGnNnk4"
+    frameborder="0"
+    allowfullscreen
+  ></iframe>
+  <div id="earthMissionControl">
+    <br /><br /><br />Earth Mission Control - Coral Quest was the final project
+    of a Harvard-MIT-Berklee collaboration class. Our group of four was assigned
+    to create a custom vignette for the Mit Media Lab Future Worlds project
+    Earth Mission Control. The project is a VR experience built in Unity,
+    featuring a coral reef environment that users are able to explore. Through
+    various interaction events on the map the user learns about how various
+    impacts of climate change and pollution can damage the ocean, coral reefs,
+    and the rest of the world. I designed most of the visual aspects of the
+    experience, as well as writing scripts for the various interactions.
+  </div>
+  <iframe
+    title="coralQuestShowcase"
+    src="https://youtube.com/embed/tZg8_fqa_eQ"
+    frameborder="0"
+    allowfullscreen
+  ></iframe>
+  <div id="audiotoMIDI">
+    <br /><br /><br />Audio2MIDI was a project I built in 2024 with the goal of
+    detecting the frequency of audio in real time using a MIDI bus, to transmit
+    MIDI data to any DAW.
+  </div>
+  <div id="hydraRenderer">
+    <br /><br /><br />I built a renderer for the visual programming language
+    Hydra, allowing users to upload videos and write their own code, which was
+    then processed faster than real time. The project was built using javascript
+    and ffmpeg and the ocde is availabe on my
+    <a href="https://github.com/MarkoJ0621" id="gitLink">github</a>
   </div>
   <div class="resize-handle"></div>
 </div>

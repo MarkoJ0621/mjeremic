@@ -224,6 +224,11 @@ button {
   animation: loadIn 1s ease-out forwards 0.7s;
 }
 
+/* Animate section text for any opened details so it's visible */
+.details.open .sectionText {
+  animation: loadIn 1s ease-out forwards 0.3s;
+}
+
 .cvHolder {
   padding-left: 75px;
   padding-top: 25px;
