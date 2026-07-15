@@ -1,14 +1,70 @@
 <script>
-  import backgroundVideo from "./assets/video.mp4";
   import resume from "./assets/resume_jeremic.pdf";
   import doink from "./assets/doink.mp3";
   import buchlaEtude from "./assets/BuchlaEtude.mp3";
   import liveHardware from "./assets/liveHardware.mp3";
   import { onMount } from "svelte";
+  import Hydra from "hydra-synth";
+
+  /** @type {HTMLCanvasElement | null} */
+  let hydraCanvas = null;
 
   onMount(() => {
     initAudioPlayer();
+
+    if (!hydraCanvas) return;
+
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+    const hydra = /** @type {any} */ (
+      new Hydra(
+        /** @type {any} */ ({
+          canvas: hydraCanvas,
+          detectAudio: false,
+          makeGlobal: false,
+        }),
+      ).synth
+    );
+
+    const resizeHydra = () => {
+      hydra.setResolution(
+        window.innerWidth * pixelRatio,
+        window.innerHeight * pixelRatio,
+      );
+    };
+
+    resizeHydra();
+    window.addEventListener("resize", resizeHydra);
+
+    hydra
+      .solid(0, 0, 0)
+      .layer(
+        hydra
+          .noise(1)
+          .kaleid(5)
+          .modulatePixelate(
+            hydra.noise(() => Math.sin(hydra.time * 0.1)).pixelate(1024),
+            512,
+          )
+          .thresh(0.5)
+          .luma(0.5)
+          .colorama(3),
+      )
+      .modulateScale(
+        hydra
+          .noise(1)
+          .kaleid(5)
+          .thresh(() => Math.sin(hydra.time))
+          .luma(0.5)
+          .colorama(1),
+      )
+      .out();
+
+    return () => {
+      window.removeEventListener("resize", resizeHydra);
+    };
   });
+
   const tabs = document.getElementsByClassName("sectionHeader");
 
   let currentAudio = null;
@@ -150,6 +206,22 @@
     let x = 0,
       y = 0;
 
+    function clampPosition(
+      parent,
+      left,
+      top,
+      width = parent.offsetWidth,
+      height = parent.offsetHeight,
+    ) {
+      const maxLeft = Math.max(0, window.innerWidth - width);
+      const maxTop = Math.max(0, window.innerHeight - height);
+
+      return {
+        left: Math.min(Math.max(left, 0), maxLeft),
+        top: Math.min(Math.max(top, 0), maxTop),
+      };
+    }
+
     function handleMouseDown(e) {
       const rect = node.parentElement.getBoundingClientRect();
       document.body.style.userSelect = "none";
@@ -158,8 +230,14 @@
 
       function handleMouseMove(moveEvent) {
         const parent = node.parentElement;
-        parent.style.left = moveEvent.clientX - x + "px";
-        parent.style.top = moveEvent.clientY - y + "px";
+        const nextPosition = clampPosition(
+          parent,
+          moveEvent.clientX - x,
+          moveEvent.clientY - y,
+        );
+
+        parent.style.left = nextPosition.left + "px";
+        parent.style.top = nextPosition.top + "px";
       }
 
       function handleMouseUp() {
@@ -190,11 +268,18 @@
 
         const width = Math.max(200, startWidth - deltaX);
         const height = Math.max(200, startHeight - deltaY);
+        const nextPosition = clampPosition(
+          parent,
+          startLeft + deltaX,
+          startTop + deltaY,
+          width,
+          height,
+        );
 
         parent.style.width = width + "px";
         parent.style.height = height + "px";
-        parent.style.left = startLeft + deltaX + "px";
-        parent.style.top = startTop + deltaY + "px";
+        parent.style.left = nextPosition.left + "px";
+        parent.style.top = nextPosition.top + "px";
       }
 
       function handleMouseUp() {
@@ -307,7 +392,7 @@
         top: "0vh",
         left: "25vw",
         width: "25vw",
-        height: "100vh",
+        height: "25vh",
         overflow: "auto",
       },
       closed: {
@@ -386,6 +471,29 @@
         overflow: "hidden",
       },
     },
+    cv: {
+      fullscreen: {
+        top: "0",
+        left: "0",
+        width: "100vw",
+        height: "100vh",
+        overflow: "auto",
+      },
+      open: {
+        top: "5vh",
+        left: "10vw",
+        width: "80vw",
+        height: "85vh",
+        overflow: "auto",
+      },
+      closed: {
+        top: "0",
+        left: "0",
+        width: "0",
+        height: "0",
+        overflow: "hidden",
+      },
+    },
   };
 
   const defaultSectionLayout = {
@@ -444,6 +552,28 @@
     if (sectionId === "software") {
       loadSection("software1");
       loadSection("software2");
+      return;
+    }
+    if (sectionId === "cv") {
+      const targetSection = /** @type {HTMLElement | null} */ (
+        document.getElementById(sectionId)
+      );
+
+      if (!targetSection) {
+        return;
+      }
+
+      const closeButton = /** @type {HTMLButtonElement | null} */ (
+        targetSection.querySelector(".close-button")
+      );
+      const layout = sectionLayouts[sectionId] ?? defaultSectionLayout;
+
+      targetSection.classList.add("open");
+      targetSection.classList.add("fullscreen");
+      applySectionLayout(targetSection, layout.fullscreen);
+      if (closeButton) {
+        closeButton.style.opacity = "1";
+      }
       return;
     }
     const targetSection = /** @type {HTMLElement | null} */ (
@@ -524,6 +654,23 @@
     );
     const layout = sectionLayouts[sectionId] ?? defaultSectionLayout;
 
+    if (sectionId === "audio2") {
+      const audioPlayer = /** @type {HTMLAudioElement | null} */ (
+        document.getElementById("audioPlayer")
+      );
+      const playButton = document.getElementById("playButton");
+
+      if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+      }
+
+      isPlaying = false;
+      if (playButton) {
+        playButton.textContent = "Play";
+      }
+    }
+
     targetSection.style.top = layout.closed.top;
     targetSection.style.left = layout.closed.left;
     targetSection.style.width = layout.closed.width;
@@ -541,7 +688,7 @@
   }
 </script>
 
-<label class="bg-toggle" for="bg-video-toggle">
+<!-- <label class="bg-toggle" for="bg-video-toggle">
   <span>Background</span>
   <input
     class="bg-toggle-input"
@@ -551,7 +698,7 @@
     aria-label="Toggle background video"
   />
   <span class="bg-toggle-slider" aria-hidden="true"></span>
-</label>
+</label> -->
 
 <div id="sections">
   <h1 class="loaded">Marko Jeremic</h1>
@@ -574,13 +721,20 @@
 
 <div id="video1" class="details">
   <div class="sectionHeader" use:draggable>
+    <div class="resize-handle"></div>
+
     <div class="sectionHeaderControls">
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("video1")}
+        ><h3>□</h3>
+      </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("video1")}
-      >
-        <h3>X</h3>
+        ><h3>X</h3>
       </button>
     </div>
   </div>
@@ -593,7 +747,6 @@
     media covering the topic of graffiti and its censorship, and various mouths
     saying sentences in various languages transliterated to english.
   </div>
-  <div class="resize-handle"></div>
   <button class="videoNav" id="backward" on:click={() => changeVideo(-1)}>
     &lt;&lt;
   </button>
@@ -604,13 +757,20 @@
 
 <div id="video2" class="details">
   <div class="sectionHeader" use:draggable>
+    <div class="resize-handle"></div>
+
     <div class="sectionHeaderControls">
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("video2")}
+        ><h3>□</h3>
+      </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("video2")}
-      >
-        <h3>X</h3>
+        ><h3>X</h3>
       </button>
     </div>
   </div>
@@ -626,13 +786,20 @@
 
 <div id="audio1" class="details">
   <div class="sectionHeader" use:draggable>
+    <div class="resize-handle"></div>
+
     <div class="sectionHeaderControls">
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("audio1")}
+        ><h3>□</h3>
+      </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("audio1")}
-      >
-        <h3>X</h3>
+        ><h3>X</h3>
       </button>
     </div>
   </div>
@@ -642,6 +809,13 @@
   <div class="resize-handle"></div>
 </div>
 <div id="audio2" class="details">
+  <button
+    class="close-button"
+    type="button"
+    on:click={() => loadMenu("audio2")}
+  >
+    <div>X</div>
+  </button>
   <div>
     <audio
       src={audio[`audio${activeAudioIndex}`].url}
@@ -668,7 +842,23 @@
     </div>
   </div>
 </div>
+
 <div id="cv" class="details">
+  <div class="sectionHeader" use:draggable>
+    <div class="sectionHeaderControls">
+      <div class="resize-handle"></div>
+
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("cv")}
+        ><h3>□</h3>
+      </button>
+      <button class="close-button" type="button" on:click={() => loadMenu("cv")}
+        ><h3>X</h3>
+      </button>
+    </div>
+  </div>
   <div class="cvHolder">
     <h1 class="cvHeader">Curriculum Vitae</h1>
     <br /><br />
@@ -689,9 +879,17 @@
           Bachelor of Music, Electronic Production and Design, Creative Coding
           2023-2026
         </li>
-        <li>3.99 GPA, 6x Dean's List</li>
+        <li>3.98 GPA, 6x Dean's List</li>
         <li>World Tour Scholarship</li>
         <li>Max Matthews award recepient</li>
+      </ul>
+      <br />
+      <div class="cvMiniTitle">Stanford University</div>
+      <ul>
+        <li>
+          MA in Music, Science, and Technology, 2026-2028 at the Center for
+          Computer Research in Music and Acoustics (CCRMA)
+        </li>
       </ul>
     </div>
     <div class="workExperience cvTitle">Work Experience</div>
@@ -717,10 +915,6 @@
           Wrote custom software for displaying scores and results from the AIDA
           API
         </li>
-      </ul>
-      <div class="cvMiniTitle">Booking Assistant, Berklee College of Music</div>
-      <ul class="cvMiniDesc">
-        <li>Assisted students with booking studio time for projects</li>
       </ul>
       <div class="cvMiniTitle">Technology Consultant, SOUNDSCAPE Studios</div>
       <ul class="cvMiniDesc">
@@ -769,14 +963,25 @@
     <div class="cvMiniTitle">
       2024, MIDISampler - Multi-FX sampler built in Csound
     </div>
+    <br />
+    <div class="cvTitle">Publications</div>
+    <div class="cvMiniTitle">
+      <br />
+      <a href="https://nime.org/proc/nime2026_163/index.html"
+        >e-baton: Recognising Conducting Gestures with Machine Learning, NIME
+        2026</a
+      >
+    </div>
   </div>
-  <button class="close-button" type="button" on:click={() => loadMenu("cv")}
-    ><div>X</div>
-  </button>
 </div>
+<button class="close-button" type="button" on:click={() => loadMenu("cv")}
+  ><div>X</div>
+</button>
 <div id="about" class="details">
   <div class="sectionHeader" use:draggable>
     <div class="sectionHeaderControls">
+      <div class="resize-handle"></div>
+
       <button
         class="fullscreen-button"
         type="button"
@@ -823,7 +1028,6 @@
     to not lose sight of the creative vision through the technological processes
     required to each and express it.
   </div>
-  <div class="resize-handle"></div>
 </div>
 <div id="software2" class="details">
   <div class="sectionHeader" use:draggable>
@@ -877,8 +1081,11 @@
     late 2025 in an attempt to bridge the gap between the gestural communication
     of conductors and electronic music. Using an accelerometer was expansive
     feature expression, I was able to create a conducting-like interaface taht
-    could be use to communicate with Max. <br /> This project was accepted into the
-    NIME 2026 conference, and I will be attending to present my research.
+    could be use to communicate with Max. <br /> This project was demoed at NIME
+    2026 and was published in the NIME 2026 proceedings.
+    <a href="https://nime.org/proc/nime2026_163/index.html"
+      >click here for the paper</a
+    >
   </div>
   <iframe
     title="batonShowcase"
@@ -919,8 +1126,6 @@
 </div>
 <div id="backgroundVideo" class:black-mode={!showBackgroundVideo}>
   {#if showBackgroundVideo}
-    <video autoplay muted loop playsinline>
-      <source src={backgroundVideo} type="video/mp4" />
-    </video>
+    <canvas bind:this={hydraCanvas}></canvas>
   {/if}
 </div>
