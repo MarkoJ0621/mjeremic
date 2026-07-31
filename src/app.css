@@ -31,6 +31,14 @@ h2 {
   animation: loadIn 1s ease-out;
 }
 
+.wip {
+  color: rgb(119, 119, 119)
+}
+
+.wip:hover {
+  cursor: not-allowed;
+}
+
 .unloaded {
   animation: loadOut 1s ease-out forwards;
 }

@@ -1,8 +1,5 @@
 <script>
   import resume from "./assets/resume_jeremic.pdf";
-  import doink from "./assets/doink.mp3";
-  import buchlaEtude from "./assets/BuchlaEtude.mp3";
-  import liveHardware from "./assets/liveHardware.mp3";
   import { onMount } from "svelte";
   import Hydra from "hydra-synth";
 
@@ -712,7 +709,7 @@
     ><h2 class="loaded">Video</h2></button
   >
   <button type="button" on:click={() => loadSection("audio")}
-    ><h2 class="loaded">Music</h2></button
+    ><h2 class="loaded wip">Music (wip)</h2></button
   >
   <button type="button" on:click={() => loadSection("cv")}
     ><h2 class="loaded">CV</h2></button
