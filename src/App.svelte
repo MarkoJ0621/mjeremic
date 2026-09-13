@@ -2,6 +2,7 @@
   import resume from "./assets/resume_jeremic.pdf";
   import { onMount } from "svelte";
   import Hydra from "hydra-synth";
+  import banned from "./assets/banned.wav";
 
   /** @type {HTMLCanvasElement | null} */
   let hydraCanvas = null;
@@ -152,21 +153,21 @@
   };
 
   const audio = {
-    // audio1: {
-    //   url: buchlaEtude,
-    //   description:
-    //     "This etude was an exercise of working on modular sound design, and experimenting with what is possible on the Buchla 200e system. The composition mostly features processed recordings from the Buchla, with the addition of one vocal and drum sample process through the composer's desktop project. Sudden alarms and loud glitches paint a desolate world, building rising tension as the piece unfolds.",
-    // },
-    // audio2: {
-    //   url: liveHardware,
-    //   description:
-    //     "This is a live hardware set feature the elektron rytm II and the lyra 8 being used together.",
-    // },
-    // audio3: {
-    //   url: doink,
-    //   description:
-    //     "This is a short piece i wrote for piano and various electronic sounds, ",
-    // },
+    audio1: {
+      url: banned,
+      description:
+        "This etude was an exercise of working on modular sound design, and experimenting with what is possible on the Buchla 200e system. The composition mostly features processed recordings from the Buchla, with the addition of one vocal and drum sample process through the composer's desktop project. Sudden alarms and loud glitches paint a desolate world, building rising tension as the piece unfolds.",
+    },
+    audio2: {
+      url: banned,
+      description:
+        "This is a live hardware set feature the elektron rytm II and the lyra 8 being used together.",
+    },
+    audio3: {
+      url: banned,
+      description:
+        "This is a short piece i wrote for piano and various electronic sounds, ",
+    },
   };
   let activeVideo = "video1";
   let activeVideoIndex = 1;
@@ -709,7 +710,7 @@
     ><h2 class="loaded">Video</h2></button
   >
   <button type="button" on:click={() => loadSection("audio")}
-    ><h2 class="loaded">Music</h2></button
+    ><h2 class="loaded">(wip no sound)</h2></button
   >
   <button type="button" on:click={() => loadSection("cv")}
     ><h2 class="loaded">CV</h2></button
@@ -839,6 +840,8 @@
     </div>
   </div>
 </div>
+
+<div style="position: absolute; top: 10px left:500px">work in progress :p</div>
 
 <div id="cv" class="details">
   <div class="sectionHeader" use:draggable>
