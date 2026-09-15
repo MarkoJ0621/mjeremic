@@ -3,6 +3,8 @@
   import { onMount } from "svelte";
   import Hydra from "hydra-synth";
   import banned from "./assets/banned.wav";
+  import moduleCollage from "./assets/modulecollage.png";
+  import xenakisPaper from "./assets/xenakisPaper.pdf";
 
   /** @type {HTMLCanvasElement | null} */
   let hydraCanvas = null;
@@ -148,7 +150,12 @@
     video2: {
       url: "https://youtube.com/embed/-H0bv6bS_Ag",
       description:
-        "I've worked with various artists in the area, using touchdesigner for their live shows, below is a reel of various concerts settings and visuals that I've designed.",
+        "I've worked with various artists in the area, using touchdesigner for their live shows, below is a reel of various concerts settings and visuals that I've designed. (NOT ACTUAL VIDEO!!!! MAKE REEL FOR THIS!!!!)",
+    },
+    video3: {
+      url: "https://youtube.com/embed/pd5wMqWBaBw",
+      description:
+        "This is an edit I made using various processing technqiues in touchdesigner, most of the processing consists of feedback lines, using delay lines in similar ways to how a reverb works. All the clips were recorded during a roadtrip through the West coast in May/June of 2026. ",
     },
   };
 
@@ -169,13 +176,64 @@
         "This is a short piece i wrote for piano and various electronic sounds, ",
     },
   };
+  const softwareProjects = [
+    {
+      title: "e-baton",
+      description:
+        "The e-baton is a NIME (New Instrument for Music Expression) that I built in late 2025 to bridge the gap between the gestural communication of conductors and electronic music. Using an accelerometer for expansive feature expression, I created a conducting-like interface that can communicate with Max. This project was demoed at NIME 2026 and published in the NIME 2026 proceedings.",
+      link: "https://nime.org/proc/nime2026_163/index.html",
+      linkLabel: "Read the paper",
+      video: "https://youtube.com/embed/gltICGnNnk4",
+    },
+    {
+      title: "Earth Mission Control - Coral Quest",
+      description:
+        "Earth Mission Control - Coral Quest was the final project of a Harvard-MIT-Berklee collaboration class. Our group of four created a custom vignette for the MIT Media Lab Future Worlds project Earth Mission Control, a VR experience where users explore a coral reef and learn how climate change and pollution damage the ocean. I designed most of the visual aspects and wrote scripts for the interactions.",
+      video: "https://youtube.com/embed/tZg8_fqa_eQ",
+    },
+    {
+      title: "Building Eurorack Modules",
+      description:
+        "For my capstone project at Berklee, I designed and prototyped two Eurorack modules. The first module was a simple 8HP reverb module, designed with the intention of providing a wide variety of reverb sounds in a small size through a macro knob that controlled multiple parameters of a custom FDN reverb algorithm I designed. The second module was a fully analog Turing machine inspired random voltage generator which provided a variety of ways to trigger and manipulate the output. Both modules had custom PCBS designed in KiCAD and were assembled with custom designed front panels.",
+      image: moduleCollage,
+    },
+    {
+      title: "Projects in Max",
+      description:
+        "I've worked extensively in Max in a variety of applications. Some of my favorite projects include",
+      items: [
+        {
+          text: "A recreation of the stochastic composition algorithm used by Iannis Xenakis in his composition 'Achorripsis', which I used to generate audio and video parts for a short film I created",
+          link: xenakisPaper,
+          linkLabel: "Read the paper",
+        },
+        {
+          text: "A custom performance patch and interface for my instrument, the e-baton, which I used to perform at Berklee and demo at NIME 2026",
+        },
+        {
+          text: "A generative patch that used MIDI file input to create Markov chains to output real-time generative counterpoint based on the input, inspired by Lejaren Hiller's Illiac Suite",
+        },
+        {
+          text: "A generative performance patch controlled using hand gestures with Mediapipe, feauturing visual feedback and processing. This was my midterms project for Introduction to Max",
+          link: "https://youtu.be/W2sRp3mzC5A",
+          linkLabel: "Watch the video",
+        },
+        {
+          text: "A custom FDN reverb algortihm that I designed in gen~, which I used in my Eurorack reverb through the Daisy Path SM board",
+          link: "https://youtu.be/S02sN2khSyI",
+          linkLabel: "Examples of the reverb",
+        },
+      ],
+    },
+  ];
   let activeVideo = "video1";
   let activeVideoIndex = 1;
   let activeAudioIndex = 1;
+  let activeSoftwareIndex = 0;
 
   function changeVideo(direction) {
     const videoHolder = document.getElementById("video2");
-    activeVideoIndex = ((activeVideoIndex - 1 + direction) % 2) + 1;
+    activeVideoIndex = ((activeVideoIndex - 1 + direction) % 3) + 1;
     activeVideo = `video${activeVideoIndex}`;
     const videoDisplay = /** @type {HTMLIFrameElement | null} */ (
       document.querySelector("#videoPlayer")
@@ -199,6 +257,12 @@
     audioPlayer.src = audio[activeAudio].url;
     audioDesc.textContent = audio[activeAudio].description;
     playAudio();
+  }
+
+  function changeSoftware(direction) {
+    activeSoftwareIndex =
+      (activeSoftwareIndex + direction + softwareProjects.length) %
+      softwareProjects.length;
   }
   function draggable(node) {
     let x = 0,
@@ -390,7 +454,7 @@
         top: "0vh",
         left: "25vw",
         width: "25vw",
-        height: "25vh",
+        height: "40vh",
         overflow: "auto",
       },
       closed: {
@@ -511,6 +575,9 @@
     },
   };
 
+  const sectionTransition = "height 0.5s ease-in-out, width 0.5s ease-in-out";
+  const sectionTransitionDuration = 500;
+
   function setBackgroundToggleVisible(isVisible) {
     const toggle = /** @type {HTMLLabelElement | null} */ (
       document.querySelector(".bg-toggle")
@@ -524,6 +591,7 @@
   }
 
   function applySectionLayout(targetSection, layout) {
+    targetSection.style.transition = sectionTransition;
     targetSection.style.opacity = "1";
     targetSection.style.top = layout.top;
     targetSection.style.left = layout.left;
@@ -533,7 +601,7 @@
 
     setTimeout(() => {
       targetSection.style.transition = "none";
-    }, 500);
+    }, sectionTransitionDuration);
   }
 
   function loadSection(sectionId) {
@@ -598,6 +666,18 @@
       setBackgroundToggleVisible(false);
     }
 
+    if (sectionId === "about") {
+      const sectionText = /** @type {HTMLElement | null} */ (
+        targetSection.querySelector(".sectionText")
+      );
+
+      if (sectionText) {
+        sectionText.classList.remove("about-text-enter");
+        void sectionText.offsetWidth;
+        sectionText.classList.add("about-text-enter");
+      }
+    }
+
     targetSection.classList.add("open");
     applySectionLayout(targetSection, layout.open);
     if (closeButton) {
@@ -620,8 +700,7 @@
     const flag = isFullscreen ? layout.fullscreen : layout.open;
 
     // Set transition for both entering and exiting fullscreen
-    targetSection.style.transition =
-      "height 0.5s ease-in-out, width 0.5s ease-in-out, top 0.5s ease-in-out, left 0.5s ease-in-out";
+    targetSection.style.transition = sectionTransition;
 
     if (flag == layout.fullscreen) {
       applySectionLayout(targetSection, layout.fullscreen);
@@ -631,7 +710,7 @@
 
     setTimeout(() => {
       targetSection.style.transition = "none";
-    }, 500);
+    }, sectionTransitionDuration);
 
     if (closeButton) {
       closeButton.style.opacity = "1";
@@ -669,6 +748,7 @@
       }
     }
 
+    targetSection.style.transition = "none";
     targetSection.style.top = layout.closed.top;
     targetSection.style.left = layout.closed.left;
     targetSection.style.width = layout.closed.width;
@@ -677,6 +757,12 @@
     targetSection.style.overflow = layout.closed.overflow;
     targetSection.classList.remove("open");
     targetSection.classList.remove("fullscreen");
+
+    if (sectionId === "about") {
+      targetSection
+        .querySelector(".sectionText")
+        ?.classList.remove("about-text-enter");
+    }
 
     if (closeButton) {
       closeButton.style.opacity = "0";
@@ -719,20 +805,20 @@
 
 <div id="video1" class="details">
   <div class="sectionHeader" use:draggable>
-    <div class="resize-handle"></div>
+    <h3 class="resize-handle">&#10529</h3>
 
     <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
         type="button"
         on:click={() => toggleSectionFullscreen("video1")}
-        ><h3>□</h3>
+        ><h3>&#9974</h3>
       </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("video1")}
-        ><h3>X</h3>
+        ><h3>&#88</h3>
       </button>
     </div>
   </div>
@@ -755,20 +841,20 @@
 
 <div id="video2" class="details">
   <div class="sectionHeader" use:draggable>
-    <div class="resize-handle"></div>
+    <h3 class="resize-handle">&#10529</h3>
 
     <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
         type="button"
         on:click={() => toggleSectionFullscreen("video2")}
-        ><h3>□</h3>
+        ><h3>&#9974</h3>
       </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("video2")}
-        ><h3>X</h3>
+        ><h3>&#88</h3>
       </button>
     </div>
   </div>
@@ -779,25 +865,24 @@
     frameborder="0"
     allowfullscreen
   ></iframe>
-  <div class="resize-handle"></div>
 </div>
 
 <div id="audio1" class="details">
   <div class="sectionHeader" use:draggable>
-    <div class="resize-handle"></div>
+    <h3 class="resize-handle">&#10529</h3>
 
     <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
         type="button"
         on:click={() => toggleSectionFullscreen("audio1")}
-        ><h3>□</h3>
+        ><h3>&#9974</h3>
       </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("audio1")}
-        ><h3>X</h3>
+        ><h3>&#88</h3>
       </button>
     </div>
   </div>
@@ -845,17 +930,17 @@
 
 <div id="cv" class="details">
   <div class="sectionHeader" use:draggable>
-    <div class="sectionHeaderControls">
-      <div class="resize-handle"></div>
+    <h3 class="resize-handle">&#10529</h3>
 
+    <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
         type="button"
         on:click={() => toggleSectionFullscreen("cv")}
-        ><h3>□</h3>
+        ><h3>&#9974</h3>
       </button>
       <button class="close-button" type="button" on:click={() => loadMenu("cv")}
-        ><h3>X</h3>
+        ><h3>&#88</h3>
       </button>
     </div>
   </div>
@@ -979,24 +1064,24 @@
 </button>
 <div id="about" class="details">
   <div class="sectionHeader" use:draggable>
-    <div class="sectionHeaderControls">
-      <div class="resize-handle"></div>
+    <h3 class="resize-handle">&#10529</h3>
 
+    <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
         type="button"
         on:click={() => toggleSectionFullscreen("about")}
-        ><h3>□</h3>
+        ><h3>&#9974</h3>
       </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("about")}
-        ><h3>X</h3>
+        ><h3>&#88</h3>
       </button>
     </div>
   </div>
-  <h1>About Me!</h1>
+  <h1 style="text-align: center;">About Me!</h1>
   <div class="sectionText">
     My name is Marko Jeremic, I am a Musician, programmer, and creator,
     dedicated to exploring the space of how we interact with music. Growing up
@@ -1031,98 +1116,108 @@
 </div>
 <div id="software2" class="details">
   <div class="sectionHeader" use:draggable>
+    <h3 class="resize-handle">&#10529</h3>
+
     <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
         type="button"
         on:click={() => toggleSectionFullscreen("software2")}
-        ><h3>□</h3>
+        ><h3>&#9974</h3>
       </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("software2")}
-        ><h3>X</h3>
+        ><h3>&#88</h3>
       </button>
     </div>
   </div>
-  <ul>
-    <li><a href="#ebaton">e-baton</a></li>
-    <li><a href="#hydraRenderer">Hydra Renderer</a></li>
-    <li>
-      <a href="#earthMissionControl">Earth Mission Control - Coral Quest</a>
-    </li>
-    <li>
-      <a href="#audiotoMIDI">Audio to MIDI Converter</a>
-    </li>
-  </ul>
-  <div class="resize-handle"></div>
+  <div class="softwareMenu">
+    {#each softwareProjects as project, index}
+      <button
+        type="button"
+        class:active={activeSoftwareIndex === index}
+        on:click={() => (activeSoftwareIndex = index)}
+      >
+        {project.title}
+      </button>
+    {/each}
+  </div>
 </div>
 <div id="software1" class="details">
   <div class="sectionHeader" use:draggable>
+    <h3 class="resize-handle">&#10529</h3>
+
     <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
         type="button"
         on:click={() => toggleSectionFullscreen("software1")}
-        ><h3>□</h3>
+        ><h3>&#9974</h3>
       </button>
       <button
         class="close-button"
         type="button"
         on:click={() => loadMenu("software1")}
-        ><h3>X</h3>
+        ><h3>&#88</h3>
       </button>
     </div>
   </div>
-  <h1>software//hardware</h1>
-  <div id="ebaton">
-    the e-baton is a NIME (New Instrument for Music Expression) that I built in
-    late 2025 in an attempt to bridge the gap between the gestural communication
-    of conductors and electronic music. Using an accelerometer was expansive
-    feature expression, I was able to create a conducting-like interaface taht
-    could be use to communicate with Max. <br /> This project was demoed at NIME
-    2026 and was published in the NIME 2026 proceedings.
-    <a href="https://nime.org/proc/nime2026_163/index.html"
-      >click here for the paper</a
-    >
+  <div class="softwareProject">
+    <h1>{softwareProjects[activeSoftwareIndex].title}</h1>
+    {#if softwareProjects[activeSoftwareIndex].image}
+      <img
+        class="softwareProjectImage"
+        src={softwareProjects[activeSoftwareIndex].image}
+        alt={softwareProjects[activeSoftwareIndex].title}
+      />
+    {/if}
+    <div class="sectionText softwareProjectDescription">
+      {softwareProjects[activeSoftwareIndex].description}
+      {#if softwareProjects[activeSoftwareIndex].link}
+        <a
+          href={softwareProjects[activeSoftwareIndex].link}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {softwareProjects[activeSoftwareIndex].linkLabel}
+        </a>
+      {/if}
+      {#if softwareProjects[activeSoftwareIndex].items}
+        <ul>
+          {#each softwareProjects[activeSoftwareIndex].items as item}
+            <li>
+              {#if typeof item === "string"}
+                {item}
+              {:else}
+                {item.text}
+                {#if item.link}
+                  <a href={item.link} target="_blank" rel="noreferrer">
+                    {item.linkLabel || "Read more"}
+                  </a>
+                {/if}
+              {/if}
+            </li>
+          {/each}
+        </ul>
+      {/if}
+    </div>
+    {#if softwareProjects[activeSoftwareIndex].video}
+      <iframe
+        title={softwareProjects[activeSoftwareIndex].title}
+        src={softwareProjects[activeSoftwareIndex].video}
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+    {/if}
+    <div class="softwareNav">
+      <button type="button" on:click={() => changeSoftware(-1)}>&lt;&lt;</button
+      >
+      <span>{activeSoftwareIndex + 1} / {softwareProjects.length}</span>
+      <button type="button" on:click={() => changeSoftware(1)}>&gt;&gt;</button>
+    </div>
   </div>
-  <iframe
-    title="batonShowcase"
-    src="https://youtube.com/embed/gltICGnNnk4"
-    frameborder="0"
-    allowfullscreen
-  ></iframe>
-  <div id="earthMissionControl">
-    <br /><br /><br />Earth Mission Control - Coral Quest was the final project
-    of a Harvard-MIT-Berklee collaboration class. Our group of four was assigned
-    to create a custom vignette for the Mit Media Lab Future Worlds project
-    Earth Mission Control. The project is a VR experience built in Unity,
-    featuring a coral reef environment that users are able to explore. Through
-    various interaction events on the map the user learns about how various
-    impacts of climate change and pollution can damage the ocean, coral reefs,
-    and the rest of the world. I designed most of the visual aspects of the
-    experience, as well as writing scripts for the various interactions.
-  </div>
-  <iframe
-    title="coralQuestShowcase"
-    src="https://youtube.com/embed/tZg8_fqa_eQ"
-    frameborder="0"
-    allowfullscreen
-  ></iframe>
-  <div id="audiotoMIDI">
-    <br /><br /><br />Audio2MIDI was a project I built in 2024 with the goal of
-    detecting the frequency of audio in real time using a MIDI bus, to transmit
-    MIDI data to any DAW.
-  </div>
-  <div id="hydraRenderer">
-    <br /><br /><br />I built a renderer for the visual programming language
-    Hydra, allowing users to upload videos and write their own code, which was
-    then processed faster than real time. The project was built using javascript
-    and ffmpeg and the ocde is availabe on my
-    <a href="https://github.com/MarkoJ0621" id="gitLink">github</a>
-  </div>
-  <div class="resize-handle"></div>
 </div>
 <div id="backgroundVideo" class:black-mode={!showBackgroundVideo}>
   {#if showBackgroundVideo}

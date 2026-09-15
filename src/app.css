@@ -2,6 +2,8 @@
   font-family: Arial;
   padding: 0;
   margin: 0;
+  scrollbar-color: whitesmoke #000;
+  scrollbar-width: auto;
 }
 
 html,
@@ -10,6 +12,26 @@ body {
   width: 100vw;
   background-color: transparent;
   overflow-x: block;
+}
+
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #000;
+  border-radius: 0;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: whitesmoke;
+  border: 2px solid #000;
+  border-radius: 0;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #fff;
 }
 
 h1 {
@@ -236,6 +258,10 @@ button {
 }
 
 #about.open .sectionText {
+  animation: none;
+}
+
+#about.open .sectionText.about-text-enter {
   animation: loadIn 1s ease-out forwards 0.7s;
 }
 
@@ -299,7 +325,7 @@ a {
 }
 
 .sectionHeader {
-  height: 5vh;
+  height: 3vh;
   width: 100%;
   background-color: whitesmoke;
   margin-bottom: 1rem;
@@ -347,10 +373,14 @@ a {
   left: 0;
   width: 20px;
   height: 20px;
-  background: #ccc;
-  cursor: nwse-resize;
   border-radius: 2px;
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 30px;
+  text-align: center;
 }
 
 .resize-handle:hover {
@@ -392,6 +422,77 @@ iframe {
   flex: 1 1 auto;
   height: auto;
   min-height: 0;
+}
+
+.softwareMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2rem;
+}
+
+.softwareMenu button {
+  color: gray;
+  cursor: pointer;
+  font-size: 1.25rem;
+  text-align: left;
+  transition: color 0.25s ease-in-out;
+}
+
+.softwareMenu button:hover,
+.softwareMenu button.active {
+  color: whitesmoke;
+}
+
+.softwareProject {
+  display: block;
+}
+
+.softwareProject h1 {
+  padding: 1.5rem 2rem 0;
+  font-size: 40px;
+}
+
+.softwareProjectImage {
+  display: block;
+  width: calc(100% - 4rem);
+  max-height: 400px;
+  object-fit: contain;
+  margin: 1rem 2rem 0;
+}
+
+.softwareProjectDescription {
+  opacity: 1;
+  transform: none;
+}
+
+.softwareProjectDescription ul {
+  margin: 1rem 0 0 1.5rem;
+}
+
+.softwareProjectDescription li {
+  margin-bottom: 0.5rem;
+}
+
+.softwareProject iframe {
+  display: block;
+  width: calc(100% - 4rem);
+  height: 400px;
+  margin: 0 2rem 1rem;
+}
+
+.softwareNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem 2rem 2rem;
+}
+
+.softwareNav button {
+  color: whitesmoke;
+  cursor: pointer;
+  font-size: 1.5rem;
 }
 
 #transportControls {
