@@ -270,6 +270,21 @@ button {
   animation: loadIn 1s ease-out forwards 0.3s;
 }
 
+#audio1 .sectionText h3 {
+  margin-bottom: 1rem;
+  color: whitesmoke;
+  font-size: 1.5rem;
+}
+
+#audio1 .sectionText div,
+#audio2 .sectionText {
+  margin-bottom: 1rem;
+}
+
+#audio1 .sectionText a {
+  margin-left: 0.25rem;
+}
+
 .cvHolder {
   padding-left: 75px;
   padding-top: 25px;
@@ -339,6 +354,16 @@ a {
   z-index: 1;
 }
 
+.sectionHeaderTitle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: black;
+  font-size: 1rem;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 .sectionHeaderControls {
   display: flex;
   align-items: center;
@@ -397,6 +422,68 @@ a {
   padding: 0.5rem;
   border-radius: 999px;
   cursor: pointer;
+}
+
+.audioNav {
+  position: absolute;
+  top: 90%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  color: whitesmoke;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.5rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+#audioBackward {
+  left: 10px;
+}
+
+#audioForward {
+  right: 10px;
+}
+
+#audioGallery {
+  display: flex;
+  flex-direction: column;
+}
+
+.audioGalleryContent {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 3rem 2.5rem;
+}
+
+.audioGalleryContent img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.audioGalleryContent .audioNav {
+  top: 50%;
+}
+
+#galleryBackward {
+  left: 0.75rem;
+}
+
+#galleryForward {
+  right: 0.75rem;
+}
+
+.audioGalleryCount {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: whitesmoke;
 }
 
 #backward {
@@ -495,85 +582,11 @@ iframe {
   font-size: 1.5rem;
 }
 
-#transportControls {
-  display: flex;
-  align-items: center;
-  gap: 4rem;
-  margin-top: 1rem;
-  width: 60vw;
-}
-
-#audio2 {
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.audioTransport {
-  font-size: 30px;
-  color: whitesmoke;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 0.5rem;
-  border-radius: 999px;
+.genreButton {
   cursor: pointer;
+  text-decoration: underline;
 }
 
-#progressSlider {
-  --progress: 0%;
-  width: 100%;
-  height: 8px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: linear-gradient(to right, #fff 0%, #fff var(--progress), #000 var(--progress), #000 100%);
-  outline: none;
-  border-radius: 5px;
-}
-
-/* Thumb styling (the draggable part) */
-#progressSlider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #fff;
-  cursor: pointer;
-  border: 2px solid #000;
-}
-
-#progressSlider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #fff;
-  cursor: pointer;
-  border: 2px solid #000;
-}
-
-/* Track styling (the bar behind) */
-#progressSlider::-webkit-slider-runnable-track {
-  background: #000;
-  border-radius: 5px;
-  border: white 2px solid;
-  width: 100%;
-
-}
-
-#progressSlider::-moz-range-track {
-  background: #000;
-  border: white 2px solid;
-  border-radius: 5px;
-  border: none;
-  width: 100%;
-  padding-left: 20vw;
-  padding-right: 3rem;
-}
-
-#playButton {
-  position: absolute;
-  top: 50%;
-  left: 10%;
-  transform: translateY(-50%);
+#audioPlayerContainer {
+  padding: 0;
 }

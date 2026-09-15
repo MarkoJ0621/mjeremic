@@ -2,16 +2,17 @@
   import resume from "./assets/resume_jeremic.pdf";
   import { onMount } from "svelte";
   import Hydra from "hydra-synth";
-  import banned from "./assets/banned.wav";
   import moduleCollage from "./assets/modulecollage.png";
   import xenakisPaper from "./assets/xenakisPaper.pdf";
+  import galleryImage1 from "./assets/img1.jpeg";
+  import galleryImage2 from "./assets/img2.jpeg";
+  import galleryImage3 from "./assets/img3.jpeg";
+  import galleryImage4 from "./assets/img4.jpeg";
 
   /** @type {HTMLCanvasElement | null} */
   let hydraCanvas = null;
 
   onMount(() => {
-    initAudioPlayer();
-
     if (!hydraCanvas) return;
 
     const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -66,81 +67,44 @@
   });
 
   const tabs = document.getElementsByClassName("sectionHeader");
-
-  let currentAudio = null;
-  let isPlaying = false;
-
-  function playAudio() {
-    const audioElement = /** @type {HTMLAudioElement | null} */ (
-      document.getElementById("audioPlayer")
-    );
-    const playButton = document.getElementById("playButton");
-    const progressSlider = document.getElementById("progressSlider");
-
-    if (!audioElement || !playButton || !progressSlider) return;
-
-    if (isPlaying) {
-      audioElement.pause();
-      playButton.textContent = "Play";
-      isPlaying = false;
-    } else {
-      audioElement.play();
-      playButton.textContent = "Pause";
-      isPlaying = true;
-    }
-  }
-
-  function updateSlider() {
-    const audioElement = /** @type {HTMLAudioElement | null} */ (
-      document.querySelector("#audioPlayer")
-    );
-    const progressSlider = /** @type {HTMLInputElement | null} */ (
-      document.getElementById("progressSlider")
-    );
-
-    if (!audioElement || !progressSlider) return;
-
-    const percent = (audioElement.currentTime / audioElement.duration) * 100;
-    progressSlider.value = percent.toString();
-    progressSlider.style.setProperty("--progress", percent + "%");
-  }
-
-  function scrubAudio(e) {
-    const audioElement = /** @type {HTMLAudioElement | null} */ (
-      document.querySelector("#audioPlayer")
-    );
-    if (!audioElement) return;
-
-    const progressSlider = e.target;
-    const newTime = (progressSlider.value / 100) * audioElement.duration;
-    audioElement.currentTime = newTime;
-  }
-
-  function initAudioPlayer() {
-    const audioElement = /** @type {HTMLAudioElement | null} */ (
-      document.querySelector("#audioPlayer")
-    );
-    if (!audioElement) return;
-
-    // initialize description and ensure player src matches the current audio
-    const audioDesc = /** @type {HTMLParagraphElement | null} */ (
-      document.getElementById("audioDescription")
-    );
-    if (audioDesc) {
-      audioDesc.textContent = audio.audio1.description;
-    }
-    if (!audioElement.src) {
-      audioElement.src = audio.audio1.url;
-    }
-
-    audioElement.addEventListener("timeupdate", updateSlider);
-    audioElement.addEventListener("ended", () => {
-      isPlaying = false;
-      const playButton = document.getElementById("playButton");
-      if (playButton) playButton.textContent = "Play";
-    });
-  }
-
+  const audio = {
+    ambient: {
+      index: 0,
+      songs: [
+        "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2140730886&color=%230c0c0c&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+        "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2140723386&color=%230c0c0c&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+        "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2140713096&color=%230c0c0c&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+      ],
+    },
+    breakcore: {
+      index: 0,
+      songs: [
+        "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2140749033&color=%230c0c0c&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+      ],
+    },
+  };
+  const audioGenres = Object.keys(audio);
+  const audioProjects = [
+    {
+      title: "My music",
+      description:
+        "I've been producing music since 2022, and have explored various different genres. My main DAW is Ableton though I have worked with Logic and FL Studio prior to switching. Most of the music I produce can be broadly labelled as",
+      genres: ["Ambient", "Footwork", "Breakcore"],
+      footer: "Click on any of the genres to hear some examples!",
+      discographyUrl: "https://soundcloud.com/sport-audio1",
+    },
+    {
+      title: "DJing",
+      description:
+        "I've gotten into DJing over the past year and have gotten the privelige to perform various events in Cyprus. Notably, myself and a few friends hosted a freeparty that got raving reviews from attendees.",
+    },
+  ];
+  const audioGalleryImages = [
+    galleryImage1,
+    galleryImage2,
+    galleryImage3,
+    galleryImage4,
+  ];
   const videos = {
     video1: {
       url: "https://youtube.com/embed/kVsvYNYZnN0",
@@ -159,23 +123,6 @@
     },
   };
 
-  const audio = {
-    audio1: {
-      url: banned,
-      description:
-        "This etude was an exercise of working on modular sound design, and experimenting with what is possible on the Buchla 200e system. The composition mostly features processed recordings from the Buchla, with the addition of one vocal and drum sample process through the composer's desktop project. Sudden alarms and loud glitches paint a desolate world, building rising tension as the piece unfolds.",
-    },
-    audio2: {
-      url: banned,
-      description:
-        "This is a live hardware set feature the elektron rytm II and the lyra 8 being used together.",
-    },
-    audio3: {
-      url: banned,
-      description:
-        "This is a short piece i wrote for piano and various electronic sounds, ",
-    },
-  };
   const softwareProjects = [
     {
       title: "e-baton",
@@ -225,10 +172,33 @@
         },
       ],
     },
+    {
+      title: "Web Projects",
+      description: "A selection of web and browser-based projects.",
+      items: [
+        {
+          text: "I built this website myself. It is built with Svelte and uses Hydra for the background visuals.",
+        },
+        {
+          text: "I also built the backend for Soundscape Studios, a studio I interned at in Cyprus. The website runs on Wix, but uses the Velo API for a custom booking system with automated emails, data collection, and approval of incoming mix demos.",
+        },
+        {
+          text: "Fusionem Artis, an installation I built in 2025, runs as an Electron Web App with Hydra, Csound, and MediaPipe.",
+          link: "https://youtu.be/NsNPWxWmPzs",
+          linkLabel: "A short demo of the installation",
+        },
+        {
+          text: "What's this Code? is a browser extension I built for HackDartmouth 2025 that translates code between languages using the Gemini API.",
+          link: "https://github.com/BBavoso/whats-this-code",
+          linkLabel: "Project repository",
+        },
+      ],
+    },
   ];
   let activeVideo = "video1";
   let activeVideoIndex = 1;
-  let activeAudioIndex = 1;
+  let activeAudioIndex = 0;
+  let activeGalleryIndex = 0;
   let activeSoftwareIndex = 0;
 
   function changeVideo(direction) {
@@ -244,25 +214,44 @@
     videoDesc.textContent = videos[activeVideo].description;
   }
 
-  function changeAudio(direction) {
-    const audioCount = Object.keys(audio).length;
-    activeAudioIndex =
-      ((activeAudioIndex - 1 + direction + audioCount) % audioCount) + 1;
-    const activeAudio = `audio${activeAudioIndex}`;
-    const audioPlayer = /** @type {HTMLAudioElement | null} */ (
-      document.querySelector("#audioPlayer")
-    );
-    const audioDesc = document.getElementById("audioDescription");
-    if (!audioPlayer || !audioDesc) return;
-    audioPlayer.src = audio[activeAudio].url;
-    audioDesc.textContent = audio[activeAudio].description;
-    playAudio();
-  }
-
   function changeSoftware(direction) {
     activeSoftwareIndex =
       (activeSoftwareIndex + direction + softwareProjects.length) %
       softwareProjects.length;
+  }
+
+  /** @param {string} genre */
+  function loadAudio(genre) {
+    const selectedAudio = /** @type {any} */ (audio)[genre];
+    const audioPlayer = /** @type {HTMLIFrameElement | null} */ (
+      document.getElementById("audioPlayer")
+    );
+
+    if (!selectedAudio || !audioPlayer) return;
+
+    selectedAudio.index =
+      (selectedAudio.index + 1) % selectedAudio.songs.length;
+    audioPlayer.src = selectedAudio.songs[selectedAudio.index];
+  }
+
+  /** @param {number} direction */
+  function changeAudio(direction) {
+    activeAudioIndex =
+      (activeAudioIndex + direction + audioProjects.length) %
+      audioProjects.length;
+    if (activeAudioIndex === 1) {
+      activeGalleryIndex = 0;
+      loadSection("audioGallery");
+    } else {
+      loadMenu("audioGallery");
+    }
+  }
+
+  /** @param {number} direction */
+  function changeGalleryImage(direction) {
+    activeGalleryIndex =
+      (activeGalleryIndex + direction + audioGalleryImages.length) %
+      audioGalleryImages.length;
   }
   function draggable(node) {
     let x = 0,
@@ -533,6 +522,29 @@
         overflow: "hidden",
       },
     },
+    audioGallery: {
+      fullscreen: {
+        top: "0",
+        left: "0",
+        width: "100vw",
+        height: "100vh",
+        overflow: "auto",
+      },
+      open: {
+        top: "20vh",
+        left: "25vw",
+        width: "50vw",
+        height: "60vh",
+        overflow: "hidden",
+      },
+      closed: {
+        top: "0",
+        left: "0",
+        width: "0",
+        height: "0",
+        overflow: "hidden",
+      },
+    },
     cv: {
       fullscreen: {
         top: "0",
@@ -613,6 +625,9 @@
     if (sectionId === "audio") {
       loadSection("audio1");
       loadSection("audio2");
+      if (activeAudioIndex === 1) {
+        loadSection("audioGallery");
+      }
       return;
     }
     if (sectionId === "software") {
@@ -731,23 +746,6 @@
     );
     const layout = sectionLayouts[sectionId] ?? defaultSectionLayout;
 
-    if (sectionId === "audio2") {
-      const audioPlayer = /** @type {HTMLAudioElement | null} */ (
-        document.getElementById("audioPlayer")
-      );
-      const playButton = document.getElementById("playButton");
-
-      if (audioPlayer) {
-        audioPlayer.pause();
-        audioPlayer.currentTime = 0;
-      }
-
-      isPlaying = false;
-      if (playButton) {
-        playButton.textContent = "Play";
-      }
-    }
-
     targetSection.style.transition = "none";
     targetSection.style.top = layout.closed.top;
     targetSection.style.left = layout.closed.left;
@@ -796,7 +794,7 @@
     ><h2 class="loaded">Video</h2></button
   >
   <button type="button" on:click={() => loadSection("audio")}
-    ><h2 class="loaded">(wip no sound)</h2></button
+    ><h2 class="loaded">Audio</h2></button
   >
   <button type="button" on:click={() => loadSection("cv")}
     ><h2 class="loaded">CV</h2></button
@@ -806,6 +804,7 @@
 <div id="video1" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">videodesc.txt</span>
 
     <div class="sectionHeaderControls">
       <button
@@ -842,6 +841,7 @@
 <div id="video2" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">video.mp4</span>
 
     <div class="sectionHeaderControls">
       <button
@@ -870,6 +870,7 @@
 <div id="audio1" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">music.mj3</span>
 
     <div class="sectionHeaderControls">
       <button
@@ -886,52 +887,131 @@
       </button>
     </div>
   </div>
-  <div class="sectionText" id="audioDescription">
-    {audio[`audio${activeAudioIndex}`].description}
+  <div class="sectionText">
+    <h3>{audioProjects[activeAudioIndex].title}</h3>
+    <div>
+      {audioProjects[activeAudioIndex].description}
+      {#if audioProjects[activeAudioIndex].genres}
+        {#each audioGenres as genre, index}
+          <button
+            class="genreButton"
+            type="button"
+            on:click={() => loadAudio(genre)}>{genre}</button
+          >{index < audioGenres.length - 1 ? ", " : "."}
+        {/each}
+      {/if}
+    </div>
+    {#if audioProjects[activeAudioIndex].footer}
+      <div>{audioProjects[activeAudioIndex].footer}</div>
+    {/if}
+    {#if audioProjects[activeAudioIndex].discographyUrl}
+      <div>
+        My entire discography can be found
+        <a href={audioProjects[activeAudioIndex].discographyUrl} target="_blank"
+          >here</a
+        >
+      </div>
+    {/if}
   </div>
+  <button class="audioNav" id="audioBackward" on:click={() => changeAudio(-1)}>
+    &lt;&lt;
+  </button>
+  <button class="audioNav" id="audioForward" on:click={() => changeAudio(1)}>
+    &gt;&gt;
+  </button>
   <div class="resize-handle"></div>
 </div>
 <div id="audio2" class="details">
-  <button
-    class="close-button"
-    type="button"
-    on:click={() => loadMenu("audio2")}
-  >
-    <div>X</div>
-  </button>
-  <div>
-    <audio
-      src={audio[`audio${activeAudioIndex}`].url}
-      preload="metadata"
+  <div class="sectionHeader" use:draggable style="margin-bottom: 0px">
+    <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">audioplayer.html</span>
+
+    <div class="sectionHeaderControls">
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("audio2")}
+        ><h3>&#9974</h3>
+      </button>
+      <button
+        class="close-button"
+        type="button"
+        on:click={() => loadMenu("audio2")}
+        ><h3>&#88</h3>
+      </button>
+    </div>
+  </div>
+  <div class="sectionText" id="audioPlayerContainer">
+    <iframe
       id="audioPlayer"
-    ></audio>
-    <button id="playButton" on:click={playAudio}>Play</button>
-    <div id="transportControls">
-      <button class="audioTransport" on:click={() => changeAudio(-1)}>
-        &lt;&lt;
+      title="SoundCloud Player"
+      width="100%"
+      height="166"
+      scrolling="no"
+      frameborder="no"
+      allow="autoplay; encrypted-media"
+      src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2140730886&color=%230c0c0c&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
+    ></iframe>
+    <div
+      style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"
+    >
+      <a
+        href="https://soundcloud.com/sport-audio1"
+        title="sport fm online library"
+        target="_blank"
+        style="color: #cccccc; text-decoration: none;"
+        >sport fm online library</a
+      >
+    </div>
+  </div>
+</div>
+<div style="position: absolute; top: 10px left:500px">work in progress :p</div>
+<div id="audioGallery" class="details">
+  <div class="sectionHeader" use:draggable>
+    <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">freeparty.jpeg</span>
+    <div class="sectionHeaderControls">
+      <button
+        class="fullscreen-button"
+        type="button"
+        on:click={() => toggleSectionFullscreen("audioGallery")}
+        ><h3>&#9974</h3>
       </button>
-      <input
-        id="progressSlider"
-        type="range"
-        min="0"
-        max="100"
-        value="0"
-        on:change={scrubAudio}
-        on:input={scrubAudio}
-      />
-      <button class="audioTransport" on:click={() => changeAudio(1)}>
-        &gt;&gt;
+      <button
+        class="close-button"
+        type="button"
+        on:click={() => loadMenu("audioGallery")}
+        ><h3>&#88</h3>
       </button>
+    </div>
+  </div>
+  <div class="audioGalleryContent">
+    <img
+      src={audioGalleryImages[activeGalleryIndex]}
+      alt={`DJing gallery image ${activeGalleryIndex + 1}`}
+    />
+    <button
+      class="audioNav"
+      id="galleryBackward"
+      type="button"
+      on:click={() => changeGalleryImage(-1)}>&lt;&lt;</button
+    >
+    <button
+      class="audioNav"
+      id="galleryForward"
+      type="button"
+      on:click={() => changeGalleryImage(1)}>&gt;&gt;</button
+    >
+    <div class="audioGalleryCount">
+      {activeGalleryIndex + 1} / {audioGalleryImages.length}
     </div>
   </div>
 </div>
 
-<div style="position: absolute; top: 10px left:500px">work in progress :p</div>
-
 <div id="cv" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
-
+    <span class="sectionHeaderTitle">cv.pdf</span>
     <div class="sectionHeaderControls">
       <button
         class="fullscreen-button"
@@ -1065,6 +1145,7 @@
 <div id="about" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">aboutme.md</span>
 
     <div class="sectionHeaderControls">
       <button
@@ -1117,6 +1198,7 @@
 <div id="software2" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">software.app</span>
 
     <div class="sectionHeaderControls">
       <button
@@ -1148,6 +1230,7 @@
 <div id="software1" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
+    <span class="sectionHeaderTitle">softwares.exe</span>
 
     <div class="sectionHeaderControls">
       <button
