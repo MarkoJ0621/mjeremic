@@ -76,12 +76,6 @@
         "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2140713096&color=%230c0c0c&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
       ],
     },
-    breakcore: {
-      index: 0,
-      songs: [
-        "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2140749033&color=%230c0c0c&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
-      ],
-    },
   };
   const audioGenres = Object.keys(audio);
   const audioProjects = [
@@ -90,13 +84,21 @@
       description:
         "I've been producing music since 2022, and have explored various different genres. My main DAW is Ableton though I have worked with Logic and FL Studio prior to switching. Most of the music I produce can be broadly labelled as",
       genres: ["Ambient", "Footwork", "Breakcore"],
-      footer: "Click on any of the genres to hear some examples!",
+      footer:
+        "Click on the genre to hear an example! You'll get a new one everytime you click.",
       discographyUrl: "https://soundcloud.com/sport-audio1",
     },
     {
       title: "DJing",
       description:
-        "I've gotten into DJing over the past year and have gotten the privelige to perform various events in Cyprus. Notably, myself and a few friends hosted a freeparty that got raving reviews from attendees.",
+        "I like to DJ and to help organise events. We hosted a freeparty in Cyprus with over 200 atendees, bring Hardcore to Cyprus.",
+    },
+    {
+      title: "Live performance",
+      description:
+        "I am a classically trained saxophonist and have been playing since I was 10 years old. Through this I've had the priveling of playing for the Limassol Wind Orchestra while I was in Cyprus. At Berklee, I focused more on jazz, and got the opportunity to play at the Berklee Performance Cetner with the Tia Fuller big band, where we performed Duke Ellington's arrangement of the Nutcracker suite.\n Apart from saxophone, I also like to do live performances with Ableton and other musicians, often doing setups with a guitar and my laptop for long, ambient, live looping sets.",
+      link: "https://youtu.be/lxmOSHKgMT4",
+      linkLabel: "An example of an modular live looping piece i did",
     },
   ];
   const audioGalleryImages = [
@@ -112,9 +114,9 @@
         "This installation was an exploration of my relationship with language and expression of thought. Growing up in a multilingual environment forced people to find different ways to express their thoughts when words weren’t an option. I wanted to explore this through the lens of graffiti, a form of expression that is taboo yet so visible. The video features a variety of media covering the topic of graffiti and its censorship, and various mouths saying sentences in various languages transliterated to english.",
     },
     video2: {
-      url: "https://youtube.com/embed/-H0bv6bS_Ag",
+      url: "https://youtube.com/embed/nrp1Hta4BV0",
       description:
-        "I've worked with various artists in the area, using touchdesigner for their live shows, below is a reel of various concerts settings and visuals that I've designed. (NOT ACTUAL VIDEO!!!! MAKE REEL FOR THIS!!!!)",
+        "I've worked with various artists in the area, using touchdesigner for their live shows, below is a reel of various concerts settings and visuals that I've designed.",
     },
     video3: {
       url: "https://youtube.com/embed/pd5wMqWBaBw",
@@ -531,10 +533,10 @@
         overflow: "auto",
       },
       open: {
-        top: "20vh",
-        left: "25vw",
-        width: "50vw",
-        height: "60vh",
+        top: "0vh",
+        left: "0vw",
+        width: "40vw",
+        height: "50vh",
         overflow: "hidden",
       },
       closed: {
@@ -912,6 +914,17 @@
         >
       </div>
     {/if}
+    {#if audioProjects[activeAudioIndex].link}
+      <div>
+        <a
+          href={audioProjects[activeAudioIndex].link}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {audioProjects[activeAudioIndex].linkLabel || "Read more"}
+        </a>
+      </div>
+    {/if}
   </div>
   <button class="audioNav" id="audioBackward" on:click={() => changeAudio(-1)}>
     &lt;&lt;
@@ -965,7 +978,7 @@
     </div>
   </div>
 </div>
-<div style="position: absolute; top: 10px left:500px">work in progress :p</div>
+<div style="position: absolute; top: 10px left:500px"></div>
 <div id="audioGallery" class="details">
   <div class="sectionHeader" use:draggable>
     <h3 class="resize-handle">&#10529</h3>
@@ -1306,4 +1319,12 @@
   {#if showBackgroundVideo}
     <canvas bind:this={hydraCanvas}></canvas>
   {/if}
+</div>
+
+<div class="mobile-blocker" role="dialog" aria-modal="true">
+  <h1>Desktop only</h1>
+  <p>
+    hi sorry the mobile version is not complete! please check this awesome
+    website out on a computer/larger screen &lt;/3 &lt;/3
+  </p>
 </div>
